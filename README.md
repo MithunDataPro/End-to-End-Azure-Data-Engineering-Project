@@ -4,7 +4,7 @@ In this project we are going to create an end to end data platform right from Da
 
 # Project Overview- Architecture
 
-![Project Architecture](path/to/your/image.png)
+![Project Architecture](https://github.com/MithunDataPro/End-to-End-Azure-Data-Engineering-Project/blob/main/Data%20Engineering%20End%20to%20End%20Project%20Architecture.png)
 
 In this project, we are going to create an end-to-end data platform covering Data Ingestion, Data Transformation, Data Loading, and Reporting. 
 
