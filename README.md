@@ -50,6 +50,6 @@ CREATE USER Mike FOR LOGIN mithun;
 -- Assign roles/permissions (optional, example: db_datareader and db_datawriter)
 ALTER ROLE db_datareader ADD MEMBER your_user_name;
 ALTER ROLE db_datawriter ADD MEMBER your_user_name;
-
+```
 So, now I have created a Key Vault in Azure to save my username and password due to its encryption for further usage!
 
