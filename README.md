@@ -53,3 +53,11 @@ ALTER ROLE db_datawriter ADD MEMBER your_user_name;
 ```
 So, now I have created a Key Vault in Azure to save my username and password due to its encryption for further usage!
 
+
+## Part 2: Data Ingestion
+Now, to connect with my on-premises database, I need to go to Azure Data Factory and use **Self-hosted Integration Runtime.
+
+1. It allows secure data movement between on-premises data sources and cloud services.
+2. It provides the capability to run copy activities between a cloud data store and a data store in a private network.
+
+Navigate to Self-hosted -> Express Setup, and this will download the new application to my system.
