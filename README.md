@@ -47,17 +47,69 @@ CREATE LOGIN mithun WITH PASSWORD = '@Welcome2024#';
 USE AdventureWorksLT2017;
 CREATE USER Mike FOR LOGIN mithun;
 
--- Assign roles/permissions (optional, example: db_datareader and db_datawriter)
-ALTER ROLE db_datareader ADD MEMBER your_user_name;
-ALTER ROLE db_datawriter ADD MEMBER your_user_name;
+-- Assign roles/permissions
+ALTER ROLE db_datareader ADD MEMBER Mike;
+ALTER ROLE db_datawriter ADD MEMBER Mike;
 ```
 So, now I have created a Key Vault in Azure to save my username and password due to its encryption for further usage!
 
 
 ## Part 2: Data Ingestion
-Now, to connect with my on-premises database, I need to go to Azure Data Factory and use **Self-hosted Integration Runtime.
+I have completed part-1 data ingestion from On-premises SQL server to Azure Data Lake Storage Gen2 through Azure Data Factory.
 
-1. It allows secure data movement between on-premises data sources and cloud services.
-2. It provides the capability to run copy activities between a cloud data store and a data store in a private network.
+#### Steps:
+### - **1.**  Created Azure Data Factory:
 
-Navigate to Self-hosted -> Express Setup, and this will download the new application to my system.
+- **a** Saved my username & password in Azure Key Vault for encryption.
+- **b** Provided required permissions to the Admin.
+
+### - **2.** Created a pipeline:
+
+- **a** Created a Lookup activity in the source dataset.
+- **b** Created a linked service and installed Microsoft Self-hosted Integration Runtime to connect with the on-premises database.
+- **c** Provided the required on-premises SQL server name, database name, username & password from the vault, and checked the connections.
+- **d** In the query box, used the following query to get all tables from the database:
+- 
+``` sql
+Copy code
+SELECT 
+  s.name AS SchemaName,
+  t.name AS TableName
+FROM sys.tables t
+INNER JOIN sys.schemas s ON t.schema_id = s.schema_id
+WHERE s.name = 'SalesLT';
+```
+- **e** Debugged and published the query.
+
+### - **3.** Created a Foreach activity:
+
+- **a** Connected Lookup to Foreach.
+- **b** In settings, selected items -> dynamic content -> @activity('look for all tables').output.value
+
+Explained why we used this:
+
+This command allows iterating through each table dynamically.
+In activities -> For Each column, selected edit option and dragged Copy Data activity.
+
+Provided source and sink. In the source, used the following query:
+
+sql
+Copy code
+@{concat('SELECT * FROM ', item().SchemaName, '.', item().TableName)}
+In user properties, added new properties SchemaName & TableName and provided values @item().SchemaName & @item().TableName.
+
+Explained why we used this:
+
+This dynamic query constructs the SELECT statement for each table and copies the data.
+Imported data in Parquet format:
+
+Explained why we use Parquet format:
+Parquet is efficient for storage and retrieval, supporting advanced compression techniques and efficient encoding schemes.
+In Parquet tables connection, selected linked service file path:
+The container created in Data Storage has:
+Bronze for raw data
+Silver for semi-transformed data
+Gold for cleaned data
+Selecting bronze / @{concat(dataset().SchemaName, '/', dataset().TableName)} / @{concat(dataset().TableName, '.parquet')} to automate file extensions.
+This completes Part-1 of the project.
+
